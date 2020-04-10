@@ -17,15 +17,11 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
 /**
- * CoinTest
- *
- * @author Philipp Winter
- * @author Jonas Heidecke
- * @author Niklas Kaddatz
+ * FruitTest
  */
-public class CoinTest {
+public class FruitTest {
 
-    private Coin instance;
+    private Fruit instance;
     private Position pos;
 
     @Before
@@ -34,7 +30,7 @@ public class CoinTest {
 
         pos = Map.getInstance().getPositionContainer().get(1, 5);
 
-        instance = new Coin(pos);
+        instance = new Fruit(pos,1);
     }
 
     @Test
@@ -50,13 +46,13 @@ public class CoinTest {
 
     @Test
     public void testGetScore() {
-        assertEquals(50, instance.getScore());
+        assertEquals(100, instance.getScore());
     }
 
     @Test
     public void testEquals() {
-        Coin c = new Coin(Map.getInstance().getPositionContainer().get(0, 0));
-        Coin c1 = instance;
+        Fruit c = new Fruit(Map.getInstance().getPositionContainer().get(0, 0),1);
+        Fruit c1 = instance;
         assertThat(c, is(not(c1)));
         assertThat(instance, is(c1));
     }

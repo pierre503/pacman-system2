@@ -74,20 +74,21 @@ public class GhostTest {
         assertEquals(200, instance.getScore());
     }
 
-    // TODO Implement
 
     @Test
     public void testChangeState() {
-
+        assertSame(DynamicTarget.State.HUNTER, instance.getState());
+        instance.changeState(DynamicTarget.State.HUNTED);
+        assertSame(DynamicTarget.State.HUNTED, instance.getState());
+        instance.changeState(DynamicTarget.State.HUNTER);
+        assertSame(DynamicTarget.State.HUNTER, instance.getState());
     }
 
     @Test
     public void testGotEaten() {
-
+        assertSame(DynamicTarget.State.HUNTER, instance.getState());
+        instance.gotEaten();
+        assertSame(DynamicTarget.State.MUNCHED, instance.getState());
     }
 
-    @Test
-    public void testReduceWaitingSeconds() {
-
-    }
 }

@@ -151,6 +151,10 @@ public class GhostContainer implements Container<Ghost> {
         return false;
     }
 
+    public int hashCode(){
+        return ghosts.hashCode();
+    }
+
     public boolean contains(Ghost g) {
         return this.ghosts.contains(g);
     }

@@ -76,6 +76,9 @@ public class Level {
         return false;
     }
 
+    public int hashCode(){
+        return level;
+    }
 
     public static void reset() {
         Level.instance = new Level();

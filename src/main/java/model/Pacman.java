@@ -8,6 +8,8 @@
 
 package model;
 
+import model.event.WorkerProcess;
+
 /**
  * @author Philipp Winter
  * @author Jonas Heidecke
@@ -65,10 +67,7 @@ public class Pacman extends DynamicTarget {
      */
     @Override
     public void eat(Target target) {
-        if (target instanceof Ghost) {
-            Ghost g = (Ghost) target;
-            g.gotEaten();
-        } else if (target instanceof StaticTarget) {
+        if (target instanceof StaticTarget) {
             StaticTarget staticTarget = (StaticTarget) target;
             if (staticTarget.getState() != StaticTarget.State.EATEN) {
                 target.gotEaten();
@@ -78,6 +77,29 @@ public class Pacman extends DynamicTarget {
         }
 
         this.score.addToScore(((Scorable) target));
+    }
+
+    /**
+     * Eat a ghost
+     * @param target ghost
+     * @param number place of ghost
+     */
+    public void eatGhost(Ghost target,int number) {
+        target.gotEaten();
+        this.score.addToScore(target.getScore()*2^number);
+    }
+
+    @Override
+    public void move(Position pos){
+        boolean placeholderOnPosition = false;
+        for(MapObject m : pos.getOnPosition()){
+            if(m instanceof Placeholder){
+                placeholderOnPosition = true;
+            }
+        }
+        if(!placeholderOnPosition){
+            this.setPosition(pos);
+        }
     }
 
     @Override
@@ -107,6 +129,10 @@ public class Pacman extends DynamicTarget {
             }
         }
         return false;
+    }
+
+    public int hashCode(){
+        return name.hashCode()+ score.hashCode();
     }
 
     public Sex getSex() {

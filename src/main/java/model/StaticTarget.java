@@ -26,12 +26,9 @@ public abstract class StaticTarget extends Target {
     @Override
     protected void setPosition(Position pos) {
         this.position = pos; // Set the position now to prevent the equals() method of the respective object to cause a NullPointerException
-        if (pos.getOnPosition().contains(this)) {
-            throw new IllegalArgumentException("There cannot be more than one StaticTarget on a position!" +
-                                                "other targets: " + pos.getOnPosition());
-        } else {
+
             super.setPosition(pos);
-        }
+
     }
 
     public void deSpawn() {

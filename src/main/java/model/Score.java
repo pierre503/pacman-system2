@@ -53,7 +53,7 @@ public class Score implements Serializable, Comparable<Score>{
      *
      * @throws java.lang.IllegalArgumentException When <i>i</i> is not positive.
      */
-    private void addToScore(int i) {
+    public void addToScore(int i) {
         if (i > 0) {
             this.score += i;
         } else {
@@ -72,6 +72,10 @@ public class Score implements Serializable, Comparable<Score>{
             }
         }
         return false;
+    }
+
+    public int hashCode(){
+        return (int)score;
     }
 
     @Override

@@ -78,6 +78,10 @@ public class MapObjectContainer implements Container<MapObject> {
         return false;
     }
 
+    public int hashCode(){
+        return mapObjects.hashCode();
+    }
+
     public boolean contains(MapObject mO) {
         return this.mapObjects.contains(mO);
     }

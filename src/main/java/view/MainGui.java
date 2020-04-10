@@ -241,6 +241,7 @@ public class MainGui extends JFrame {
                 );
 
                 Vector<MapObject> mapObjects = pos.getOnPosition().getAll();
+
                 for (MapObject mO : mapObjects) {
                     if (mO.isVisible()) {
                         BufferedImage img = imgOrganizer.get(mO);

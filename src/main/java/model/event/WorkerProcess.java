@@ -30,7 +30,16 @@ public class WorkerProcess implements Process {
 
     private PacmanContainer pacmans;
 
+    private FruitContainer fruits;
+
     private Map map;
+
+    private Game gameInstance = Game.getInstance();
+
+    private boolean hunted = false;
+
+    private int ghostEaten = 0;
+
 
     private boolean checkCoinSeconds = false;
 
@@ -51,6 +60,7 @@ public class WorkerProcess implements Process {
         this.ghosts = Game.getInstance().getGhostContainer();
         this.pacmans = Game.getInstance().getPacmanContainer();
         this.map = Game.getInstance().getMap();
+        this.fruits = Game.getInstance().getFruitsContainer();
     }
 
     @Override
@@ -58,6 +68,7 @@ public class WorkerProcess implements Process {
         try {
             if (this.check()) {
                 this.markDynamicObjectsForRendering();
+                this.newFruit();
 
                 this.handleCoins();
                 this.performCollisions();
@@ -117,10 +128,13 @@ public class WorkerProcess implements Process {
         double activeSeconds = Coin.getActiveSeconds();
 
         if (activeSeconds != Coin.PACMAN_AINT_EATER) {
+            hunted = true;
             Coin.reduceActiveSeconds(1 / Game.getInstance().getRefreshRate());
         }
 
         if (checkCoinSeconds && Coin.getActiveSeconds() == Coin.PACMAN_AINT_EATER) {
+            hunted = false;
+            ghostEaten = 0;
             for (Ghost g : Game.getInstance().getGhostContainer()) {
                 if (g.getState() == DynamicTarget.State.HUNTED) {
                     g.changeState(DynamicTarget.State.HUNTER);
@@ -138,6 +152,24 @@ public class WorkerProcess implements Process {
     private void handleGhosts() {
         for (Ghost g : this.ghosts) {
             this.handleGhost(g);
+        }
+    }
+
+    private void newFruit(){
+        int limity = map.height-1;
+        int limitx = map.width-1;
+
+        int x = (int) Math.round(Math.random()*limitx);
+        int y = (int) Math.round(Math.random()*limity);
+
+        Position el = map.getPositionContainer().get(x,y);
+        for (MapObject mO: el.getOnPosition().getAll()) {
+            if (mO instanceof Point) {
+                if (Math.random() > 0.9 && !mO.isVisible()) {
+                    fruits.add(new Fruit(el, gameInstance.getLevel().getLevel()));
+                    Map.positionsToRender.add(el);
+                }
+            }
         }
     }
 
@@ -162,6 +194,7 @@ public class WorkerProcess implements Process {
     private void performCollision(Pacman pac) {
         MapObjectContainer mapObjectsOnPos = pac.getPosition().getOnPosition();
 
+
         for (MapObject mO : mapObjectsOnPos.getAll()) {
             if (mO instanceof StaticTarget) {
                 StaticTarget t = (StaticTarget) mO;
@@ -175,7 +208,8 @@ public class WorkerProcess implements Process {
             } else if (mO instanceof Ghost) {
                 Ghost g = (Ghost) mO;
                 if (g.getState() == DynamicTarget.State.HUNTED) {
-                    pac.eat(g);
+                    ghostEaten += 1;
+                    pac.eatGhost(g, ghostEaten);
                 } else if (g.getState() == DynamicTarget.State.HUNTER) {
                     g.eat(pac);
                 }

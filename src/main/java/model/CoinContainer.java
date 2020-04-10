@@ -137,6 +137,11 @@ public class CoinContainer implements Container<Coin> {
         return this.coins.contains(mO);
     }
 
+
+    public int hashCode(){
+        return coins.hashCode();
+    }
+
     public boolean equals(Object o) {
         if (o != null) {
             if (o instanceof CoinContainer) {

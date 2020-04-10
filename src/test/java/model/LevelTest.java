@@ -10,6 +10,7 @@ package model;
 
 import controller.MainController;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -41,6 +42,7 @@ public class LevelTest {
     @Test
     public void testNextLevel() {
         assertEquals(1, instance.getLevel());
+        System.out.println(Game.getInstance().getPointContainer().size());
         instance.nextLevel();
         assertTrue("Assert that " + Game.getInstance().getRefreshRate() + " is greater than " + Game.BASIC_REFRESH_RATE, Game.getInstance().getRefreshRate() > Game.BASIC_REFRESH_RATE);
         assertEquals(2, instance.getLevel());

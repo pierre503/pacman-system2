@@ -135,6 +135,7 @@ public class Ghost extends DynamicTarget implements Scorable {
         this.movedInLastTurn = b;
     }
 
+
     @Override
     public int getScore() {
         return 200;
@@ -171,6 +172,11 @@ public class Ghost extends DynamicTarget implements Scorable {
         }
         return false;
     }
+
+    public int hashCode(){
+        return colour.hashCode()+name.hashCode();
+    }
+
 
     public enum Colour {
 

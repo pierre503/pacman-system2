@@ -47,6 +47,11 @@ public class Game {
     private GhostContainer ghostContainer;
 
     /**
+     * A container of all fruits.
+     */
+    private FruitContainer fruitsContainer;
+
+    /**
      * A container of all coins.
      */
     private CoinContainer coinContainer;
@@ -86,12 +91,6 @@ public class Game {
 
     private int playerLifes = 3;
 
-    /**
-     * Constructs a new Game object.
-     */
-    private Game() {
-
-    }
 
     /**
      * Reset the game, for instance necessary when the user wants to start a new try.
@@ -118,10 +117,13 @@ public class Game {
         this.pointContainer = new PointContainer();
         this.pacmanContainer = new PacmanContainer();
         this.level = Level.getInstance();
+        this.fruitsContainer = new FruitContainer();
 
         this.eventHandlerManager = new Timer();
         this.eventHandlerManager.register(new WorkerProcess());
         this.eventHandlerManager.register(new RendererProcess());
+
+        this.map.placeObjects();
 
     }
 
@@ -178,6 +180,16 @@ public class Game {
      */
     public PacmanContainer getPacmanContainer() {
         return pacmanContainer;
+    }
+
+
+    /**
+     * Gets the fruits container.
+     *
+     * @return The container used to manage all instance of {@link Fruit}'s in the object tree.
+     */
+    public FruitContainer getFruitsContainer() {
+        return fruitsContainer;
     }
 
     /**
@@ -246,6 +258,8 @@ public class Game {
         }
         return false;
     }
+
+
 
     public void gameOver() {
         this.isOver = true;

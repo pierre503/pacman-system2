@@ -61,6 +61,11 @@ public class ImageOrganizer {
             key += ">" + p.getHeadingTo();
         }
 
+        if (mO instanceof Fruit){
+            Fruit f = (Fruit) mO;
+            key += f.type();
+        }
+
         if (images.containsKey(key)) {
             return images.get(key);
         } else {
@@ -155,6 +160,21 @@ public class ImageOrganizer {
         data.add(
                 new String[]{"/graphics/resized/ghosts/pinky/6.png", Ghost.class.getCanonicalName() + ">PINK" + ">SOUTH"}
         );
+
+        // FRUIT
+        data.add(
+                new String[]{"/graphics/resized/bonus/cherry.png", Fruit.class.getCanonicalName()+"Cherry"}
+        );
+        data.add(
+                new String[]{"/graphics/resized/bonus/strawberry.png", Fruit.class.getCanonicalName()+"Strawberry"}
+        );
+        data.add(
+                new String[]{"/graphics/resized/bonus/grape.png", Fruit.class.getCanonicalName()+"Orange"}
+        );
+        data.add(
+                new String[]{"/graphics/resized/bonus/apple.png", Fruit.class.getCanonicalName()+"Apple"}
+        );
+
 
         // COIN
         data.add(

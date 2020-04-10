@@ -9,6 +9,8 @@
 package controller;
 
 import model.Game;
+import model.MapInformation;
+import model.MapParser;
 import model.exception.BasicUncaughtExceptionHandler;
 import view.MainGui;
 
@@ -49,6 +51,7 @@ public class MainController extends Thread {
      * @param args The command line arguments given to the program.
      */
     public static void main(String[] args) {
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -56,6 +59,7 @@ public class MainController extends Thread {
             }
 
         });
+
     }
 
     public static void reset() {
