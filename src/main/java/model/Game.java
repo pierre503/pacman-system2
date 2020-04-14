@@ -124,7 +124,6 @@ public class Game {
         this.eventHandlerManager.register(new RendererProcess());
 
         this.map.placeObjects();
-
     }
 
     /**

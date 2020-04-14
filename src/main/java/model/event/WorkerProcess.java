@@ -43,6 +43,8 @@ public class WorkerProcess implements Process {
 
     private boolean checkCoinSeconds = false;
 
+    private int MULTIPLE = 1;
+
     @Override
     public long getTiming() {
         return (long) (1000 / Game.getInstance().getRefreshRate());
@@ -77,9 +79,20 @@ public class WorkerProcess implements Process {
                 this.handleGhosts();
 
                 this.markDynamicObjectsForRendering();
+
+                this.pacmanScore();
             }
         } catch (Throwable t) {
             MainController.uncaughtExceptionHandler.uncaught(t);
+        }
+    }
+
+    private void pacmanScore(){
+        for(Pacman p : Game.getInstance().getPacmanContainer()){
+            if(p.getScore().getScore() > MULTIPLE*10000){
+                Game.getInstance().increasePlayerLifes();
+                MULTIPLE++;
+            }
         }
     }
 

@@ -35,10 +35,6 @@ public class Level {
 
         this.level++;
 
-        if(Math.random() >= 0.7) {
-            Game.getInstance().increasePlayerLifes();
-        }
-
         // Change the refresh rate = How fast is the pacman moving
         Game.getInstance().changeRefreshRate(this);
 
