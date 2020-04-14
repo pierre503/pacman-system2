@@ -126,6 +126,52 @@ public class Game {
         this.map.placeObjects();
     }
 
+    public void respawn(){
+        int i = (int) (Math.random()*map.getPositionContainer().getAll().size());
+        MapObjectContainer p = map.getPositionContainer().getAll().get(i).getOnPosition();
+        if(p.size() == 1 && p.get(0) instanceof Point) {
+            map.setRespawnPosition(map.getPositionContainer().getAll().get(i));
+        }
+        else
+            respawn();
+    }
+    public boolean isAGhost(Position pos){
+        int i = 0;
+        boolean b = false;
+        while(i < ghostContainer.max){
+            if(pos.equals(ghostContainer.get(i).position)){
+                b = true;
+                i = 5;
+            }
+            i++;
+        }
+        return b;
+    }
+    public boolean ghostOnPosition(MapObjectContainer p, int x, int y){
+        try {
+            Position pos = map.getPositionContainer().get(p.get(0).getPosition().getX() + x, p.get(0).getPosition().getY() + y);
+            if (isAGhost(pos))
+                return false;
+            else
+                return true;
+        }catch (Exception e){
+            System.out.println("exception");
+            return true;}
+    }
+
+    public boolean ghostInRangeOf(MapObjectContainer p, int range){
+        int i = 1;
+        boolean b = true;
+        while (i <= range) {
+            if (ghostOnPosition(p, i, 0) == false || ghostOnPosition(p, -i, 0) == false || ghostOnPosition(p, 0, i) == false || ghostOnPosition(p, 0, -i) == false) {
+                b = false;
+                i = range +1;
+            }
+            i++;
+        }
+        return b;
+    }
+
     /**
      * Is the Game already initialized?
      */

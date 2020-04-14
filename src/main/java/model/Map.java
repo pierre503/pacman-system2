@@ -35,6 +35,8 @@ public class Map {
 
     public static StartingPosition startingPositions;
 
+    private Position respawnPosition;
+
     public static Map getInstance() {
         if (Map.instance == null) {
             Map.instance = new Map();
@@ -276,7 +278,7 @@ public class Map {
         for(Pacman p : pC) {
             switch(p.getSex()) {
                 case MALE:
-                    p.move(startingPositions.PACMAN_MALE);
+                    p.move(respawnPosition);
                     break;
                 case FEMALE:
                     p.move(startingPositions.PACMAN_FEMALE);
@@ -293,6 +295,14 @@ public class Map {
 
     public void markAllForRendering() {
         positionsToRender.add(positionContainer);
+    }
+
+    public Position getRespawnPosition() {
+        return respawnPosition;
+    }
+
+    public void setRespawnPosition(Position respawnPosition) {
+        this.respawnPosition = respawnPosition;
     }
 
     public enum Direction {

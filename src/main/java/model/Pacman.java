@@ -110,6 +110,7 @@ public class Pacman extends DynamicTarget {
             if (Game.getInstance().getPlayerLifes() <= 0) {
                 Game.getInstance().gameOver();
             }
+            Game.getInstance().respawn();
             Game.getInstance().onPacmanGotEaten();
             this.changeState(prevState);
         } else {
