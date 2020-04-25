@@ -61,7 +61,7 @@ public class Map {
     }
 
     private Map(int level) {
-        this(Settings.getInstance().getLevelPath() + "/Pacman"+level+".tmx");
+        this(Settings.getInstance().getLevelPath() + "/Pacman"+level);
         this.level = level;
     }
 
@@ -74,11 +74,11 @@ public class Map {
         MapInformation mapInf;
         if(level == 999) {
             System.out.println("test");
-            mapInf = MapParser.ParseMap(Settings.getInstance().getLevelPath() + "/PacmanBonus.tmx");
+            mapInf = MapParser.ParseMap(Settings.getInstance().getLevelPath() + "/PacmanBonus");
         }
         else {
             level = next;
-            mapInf = MapParser.ParseMap(Settings.getInstance().getLevelPath() + "/Pacman" + level + ".tmx");
+            mapInf = MapParser.ParseMap(Settings.getInstance().getLevelPath() + "/Pacman" + level);
         }
         load(mapInf);
     }

@@ -8,6 +8,11 @@
 
 package model;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * Settings
  *
@@ -57,5 +62,28 @@ public class Settings {
 
     public void setLevelPath(String levelPath) {
         this.levelPath = levelPath;
+    }
+
+    public String getExtension(String path){
+        try {
+            InputStream flux = new FileInputStream(levelPath + "/saveInfo.txt");
+            InputStreamReader lecture = new InputStreamReader(flux);
+            BufferedReader buff = new BufferedReader(lecture);
+            String ligne;
+            int index = 0;
+            String extension = ".";
+            while ((ligne = buff.readLine()) != null) {
+                String[] mots = ligne.split(" ");
+                if (index > 0) {
+                    String[] ext = mots[0].split("\\.");
+                    if(ext[0].equals(path))
+                        extension = extension + ext[1];
+                    }
+                index++;
+            }
+            System.out.println(extension);
+            return extension;
+        }catch (Exception e){}
+        return null;
     }
 }

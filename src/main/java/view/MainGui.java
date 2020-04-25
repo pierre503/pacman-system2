@@ -92,11 +92,13 @@ public class MainGui extends JFrame {
 
     private Font fontBtn = new Font("Agency FB", Font.PLAIN, 22);
 
+    private LoadSave loadSave;
+
     public MainGui() {
-        path = "src/main/resources/maps/levels/saveInfo.txt";
+        loadSave = new LoadSave(this);
         file = new File("src/main/resources/maps/levels");
         nbrcampaign = new File("src/main/resources/maps/campaign");
-        campaignFile = getCampaignPath();
+        campaignFile = loadSave.getCampaignPath();
         f = file.listFiles();
         campaignF = campaignFile.listFiles();
         nbrcampaignF = nbrcampaign.listFiles();
@@ -254,6 +256,10 @@ public class MainGui extends JFrame {
                     //getContentPane().removeAll();
                     //getContentPane().add(levelSelection);
                     //setContentPane(levelSelection);
+                    MapInformation m = MapParser.ParseTxtMap("src/main/resources/maps/levels/Pacman3.txt");
+                    MapInformation m2 = MapParser.ParseTmxMap("src/main/resources/maps/levels/Pacman2.tmx");
+                    System.out.println(m.getBoard()[0].length);
+                    System.out.println(m2.getBoard()[0].length);
                     if(gameRunning == false) {
                         btnPlaySingleplayer.setText("Pause");
                         getContentPane().removeAll();
@@ -363,12 +369,12 @@ public class MainGui extends JFrame {
         for(int i = 0; i <lengthList; i++){
             LevelButton button = new LevelButton("level" + (i+1), (i+1));
             button.setFont(new Font("Agency FB", Font.PLAIN, 22));
-            if((i+1) > getLastUnlocked() && i > 0) {
+            if((i+1) > loadSave.getLastUnlocked() && i > 0) {
                 button.setText("Locked");
                 button.setLocked(true);
             }
             //button.setLocation(i*jpanel.getWidth(), i*jpanel.getHeight());
-            button.setStars(getLevelStar(i+1));
+            button.setStars(loadSave.getLevelStar(i+1));
             buttonList.add(button);
         }
         //buttonList.add(level1);
@@ -391,14 +397,14 @@ public class MainGui extends JFrame {
         panel.add(nextCampaign, BorderLayout.EAST);
         panel.add(previousCampaign, BorderLayout.WEST);
 
-        if(getCampaignTotalStars() >= 6)
+        if(loadSave.getCampaignTotalStars() >= 6)
             nextCampaign.setVisible(true);
         else
             nextCampaign.setVisible(false);
 
         return panel;
     }
-    public int getLastUnlocked(){
+    /*public int getLastUnlocked(){
         InputStream flux= null;
         String filePath = null;
         int maxLevel = 0;
@@ -525,7 +531,7 @@ public class MainGui extends JFrame {
     }
     public File getCampaignPath(){
         return new File("src/main/resources/maps/campaign/campaign" + campaignIndex);
-    }
+    }*/
 
     public static void setLevelSelected(int newLevel) {
         levelSelected = newLevel;
@@ -555,7 +561,7 @@ public class MainGui extends JFrame {
     public void switchCampaign(JButton button){
         button.setText("pause");
         getContentPane().removeAll();
-        campaignFile = getCampaignPath();
+        campaignFile = loadSave.getCampaignPath();
         getContentPane().add(generateCampaignPanel());
     }
 
@@ -604,6 +610,14 @@ public class MainGui extends JFrame {
 
     public void onGameOver() {
         onFinishScreen("GAME OVER");
+    }
+
+    public int getCampaignIndex() {
+        return campaignIndex;
+    }
+
+    public LoadSave getLoadSave() {
+        return loadSave;
     }
 
     private class GamePanel extends JPanel {
@@ -685,7 +699,6 @@ public class MainGui extends JFrame {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             if(locked == false) {
-                System.out.println(stars);
                 setText(showStars());
                 setLevelSelected(this.level);
             }

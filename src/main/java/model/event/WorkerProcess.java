@@ -125,7 +125,7 @@ public class WorkerProcess implements Process {
         performFurtherActions = (pointsEaten != size) && (!Game.getInstance().isGameOver());
 
         if (pointsEaten == size) {
-            MainGui.save(Settings.getInstance().getLevelPath() + "/Pacman" + Level.getInstance().getLevel() + ".tmx", Level.getInstance().star, (Level.getInstance().getLevel()+1));
+            Game.getInstance().getGui().getLoadSave().save(Settings.getInstance().getLevelPath() + "/Pacman" + Level.getInstance().getLevel() + Settings.getInstance().getExtension(Settings.getInstance().getLevelPath() + "/Pacman" + Level.getInstance().getLevel()), Level.getInstance().star, (Level.getInstance().getLevel()+1));
             System.out.println(MainGui.getF().length);
             if((Map.getInstance().level)+1 <= MainGui.getF().length) {
                 //Game.getInstance().gameOver();
@@ -134,8 +134,8 @@ public class WorkerProcess implements Process {
             }
             else{
                 System.out.println(Level.getInstance().star);
-                System.out.println(Game.getInstance().getGui().getCampaignTotalStars());
-                if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN && Game.getInstance().getGui().getCampaignTotalStars() == 9 && Level.getInstance().getLevel() != 999) {
+                System.out.println(Game.getInstance().getGui().getLoadSave().getCampaignTotalStars());
+                if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN && Game.getInstance().getGui().getLoadSave().getCampaignTotalStars() == 9 && Level.getInstance().getLevel() != 999) {
                     Game.getInstance().nextMap(999);
                     Level.getInstance().nextLevel();
                 }
