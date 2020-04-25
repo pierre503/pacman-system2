@@ -8,6 +8,8 @@
 
 package model;
 
+import view.MainGui;
+
 import java.util.Hashtable;
 
 /**
@@ -27,9 +29,9 @@ public class Map {
 
     private Hashtable tileInf;
 
-    public final int width;
+    public int width;
 
-    public final int height;
+    public int height;
 
     private boolean objectsPlaced = false;
 
@@ -37,24 +39,51 @@ public class Map {
 
     private Position respawnPosition;
 
+    public int level = 1;
+
     public static Map getInstance() {
         if (Map.instance == null) {
-            Map.instance = new Map();
+            Map.instance = new Map(1);
         }
 
         return Map.instance;
     }
 
-    public static void reset() {
-        Map.instance = new Map();
+    public static Map getInstance(int level){
+        if(Map.instance == null){
+            Map.instance = new Map(level);
+        }
+        return Map.instance;
     }
 
-    private Map() {
-        this("src/main/resources/maps/Pacman.tmx");
+    public static void reset(int level) {
+        Map.instance = new Map(level);
+    }
+
+    private Map(int level) {
+        this(Settings.getInstance().getLevelPath() + "/Pacman"+level+".tmx");
+        this.level = level;
     }
 
     private Map(String File) {
         MapInformation mapInf = MapParser.ParseMap(File);
+        load(mapInf);
+    }
+
+    public void getNextMap(int next){
+        MapInformation mapInf;
+        if(level == 999) {
+            System.out.println("test");
+            mapInf = MapParser.ParseMap(Settings.getInstance().getLevelPath() + "/PacmanBonus.tmx");
+        }
+        else {
+            level = next;
+            mapInf = MapParser.ParseMap(Settings.getInstance().getLevelPath() + "/Pacman" + level + ".tmx");
+        }
+        load(mapInf);
+    }
+
+    public void load(MapInformation mapInf){
         this.board = mapInf.board;
         this.tileInf = mapInf.tile;
 
@@ -231,7 +260,9 @@ public class Map {
     public void onPacmanGotEaten() {
         this.replaceDynamicObjects();
     }
-
+    public void t(){
+        this.replaceDynamicObjects();
+    }
     public static class StartingPosition {
 
         public final Position GHOST_RED;
@@ -278,7 +309,7 @@ public class Map {
         for(Pacman p : pC) {
             switch(p.getSex()) {
                 case MALE:
-                    p.move(respawnPosition);
+                    p.move(startingPositions.PACMAN_MALE);
                     break;
                 case FEMALE:
                     p.move(startingPositions.PACMAN_FEMALE);

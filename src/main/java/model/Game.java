@@ -14,6 +14,8 @@ import model.event.Timer;
 import model.event.WorkerProcess;
 import view.MainGui;
 
+import javax.swing.*;
+
 /**
  * The Game class is kind of a <i>master</i>-class, organizing all other business logic objects.
  *
@@ -87,10 +89,19 @@ public class Game {
      */
     private Level level;
 
-    private boolean isOver = false;
+    public boolean isOver = false;
 
     private int playerLifes = 3;
 
+    private MainGui gui;
+
+    public MainGui getGui() {
+        return gui;
+    }
+
+    public void setGui(MainGui gui) {
+        this.gui = gui;
+    }
 
     /**
      * Reset the game, for instance necessary when the user wants to start a new try.
@@ -106,24 +117,37 @@ public class Game {
      * The internal initialization method.
      */
     private synchronized void initializeInternal() {
-        Map.reset();
+        Map.reset(1);
         Coin.resetActiveSeconds();
         Level.reset();
 
-        this.map = Map.getInstance();
+        this.map = Map.getInstance(1);
 
-        this.ghostContainer = new GhostContainer();
-        this.coinContainer = new CoinContainer();
-        this.pointContainer = new PointContainer();
-        this.pacmanContainer = new PacmanContainer();
+        resetContainer();
+
         this.level = Level.getInstance();
-        this.fruitsContainer = new FruitContainer();
 
         this.eventHandlerManager = new Timer();
         this.eventHandlerManager.register(new WorkerProcess());
         this.eventHandlerManager.register(new RendererProcess());
 
         this.map.placeObjects();
+    }
+
+    public void nextMap(int nextMap){
+            this.map.getNextMap(nextMap);
+            this.level.setLevel(nextMap);
+            this.level.star = 3;
+            resetContainer();
+            this.map.placeObjects();
+    }
+
+    public void resetContainer(){
+        this.ghostContainer = new GhostContainer();
+        this.coinContainer = new CoinContainer();
+        this.pointContainer = new PointContainer();
+        this.pacmanContainer = new PacmanContainer();
+        this.fruitsContainer = new FruitContainer();
     }
 
     public void respawn(){
@@ -185,6 +209,8 @@ public class Game {
 
     public void reducePLayerLifes() {
         this.playerLifes -= 1;
+        if(this.level.star > 0)
+            this.level.star -= 1;
     }
 
     public Level getLevel() {
@@ -271,7 +297,9 @@ public class Game {
      *
      * @see model.event.Timer#startExecution()
      */
-    public void start() {
+    public void start(int level) {
+        if(MainGui.isGameRunning() == false)
+            nextMap(level);
         if(pointContainer.size() == 0){
             this.map.placeObjects();
         }
@@ -339,6 +367,6 @@ public class Game {
     }
 
     public enum Mode {
-        SINGLEPLAYER, MULTIPLAYER
+        SINGLEPLAYER, MULTIPLAYER, NORMAL, CAMPAIGN
     }
 }

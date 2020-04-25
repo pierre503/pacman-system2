@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" width="20" height="10" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" name="tilesetPacman" tilewidth="32" tileheight="32" tilecount="21" columns="7">
+  <image source="../tilesetPacman.png.png" width="224" height="96"/>
+  <tile id="0" type="Wall"/>
+  <tile id="1" type="Holder"/>
+  <tile id="2" type="Red-Ghost"/>
+  <tile id="3" type="Orange-Ghost"/>
+  <tile id="4" type="Blue-Ghost"/>
+  <tile id="5" type="Pink-Ghost"/>
+  <tile id="6" type="Pacman_Male"/>
+  <tile id="7" type="SuperGums"/>
+  <tile id="8" type="Key"/>
+  <tile id="9" type="Apple"/>
+  <tile id="10" type="Orange"/>
+  <tile id="11" type="Cherry"/>
+  <tile id="12" type="Grapes"/>
+  <tile id="13" type="Strawberry"/>
+  <tile id="14" type="Gums"/>
+  <tile id="15" type="Pacman_Female"/>
+ </tileset>
+ <layer id="1" name="Calque 1" width="20" height="10">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,8,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,8,1,
+1,15,1,1,1,1,15,1,2,2,2,2,1,15,1,1,1,1,15,1,
+1,15,1,2,2,1,15,1,4,5,6,3,1,15,1,2,2,1,15,1,
+1,15,1,2,2,1,15,1,1,1,1,1,1,15,1,2,2,1,15,1,
+1,15,1,1,1,1,15,15,15,15,15,15,15,15,1,1,1,1,15,1,
+1,15,15,15,15,15,16,1,1,1,1,1,1,7,15,15,15,15,15,1,
+1,15,1,1,1,1,15,1,2,1,1,2,1,15,1,1,1,1,15,1,
+1,8,15,15,15,15,15,1,1,2,2,1,1,15,15,15,15,15,8,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+</data>
+ </layer>
+</map>

@@ -16,7 +16,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
 import java.util.Vector;
 
 public class MainGui extends JFrame {
@@ -28,6 +29,8 @@ public class MainGui extends JFrame {
     private final ImageOrganizer imgOrganizer;
 
     private final Renderer renderer;
+    private final File nbrcampaign;
+    private final File[] nbrcampaignF;
 
     private JPanel pnlPreGame;
 
@@ -47,7 +50,60 @@ public class MainGui extends JFrame {
 
     private boolean initialized;
 
+    private JPanel levelSelection;
+
+    private JPanel levelButtons;
+
+    private JButton Play;
+
+    private JLabel lblBackground2;
+
+    private ActionListener testListener;
+
+    private static boolean gameRunning;
+
+    private static String path;
+
+    private File file;
+
+    private static File[] f;
+
+    public static int levelSelected;
+
+    private JPanel GameMode;
+
+    private JLabel lblBackground3;
+
+    private JButton normal;
+    private JButton campaign;
+
+    private JPanel modeButton;
+    private ActionListener test2Listener;
+
+    private JPanel CampaignSelection;
+    private JButton campaignPlay;
+    private JButton nextCampaign;
+    private JButton previousCampaign;
+
+    private File campaignFile;
+    private int campaignIndex = 1;
+    private ActionListener nextLister;
+    private File[] campaignF;
+
+    private Font fontBtn = new Font("Agency FB", Font.PLAIN, 22);
+
     public MainGui() {
+        path = "src/main/resources/maps/levels/saveInfo.txt";
+        file = new File("src/main/resources/maps/levels");
+        nbrcampaign = new File("src/main/resources/maps/campaign");
+        campaignFile = getCampaignPath();
+        f = file.listFiles();
+        campaignF = campaignFile.listFiles();
+        nbrcampaignF = nbrcampaign.listFiles();
+        Arrays.sort(f);
+        Arrays.sort(campaignF);
+        Arrays.sort(nbrcampaignF);
+        levelSelected = 1;
         controller = MainController.getInstance();
         imgOrganizer = ImageOrganizer.getInstance();
         try {
@@ -98,6 +154,22 @@ public class MainGui extends JFrame {
         pnlGame = new GamePanel();
         pnlGame.setLayout(new FlowLayout());
 
+        levelSelection = new JPanel();
+        levelSelection.setLayout(new BorderLayout());
+
+        GameMode = new JPanel();
+        GameMode.setLayout(new BorderLayout());
+
+        CampaignSelection = new JPanel();
+        CampaignSelection.setLayout(new BorderLayout());
+
+        lblBackground3 = new JLabel(new ImageIcon(this.getClass().getResource("/graphics/background/main_background_middle.jpg")));
+        lblBackground3.setLayout(new FlowLayout());
+
+        modeButton = new JPanel();
+        modeButton.setLayout(new FlowLayout());
+        modeButton.setOpaque(false);
+
         lblBackground = new JLabel(new ImageIcon(this.getClass().getResource("/graphics/background/main_background_middle.jpg")));
         lblBackground.setLayout(new FlowLayout());
 
@@ -105,7 +177,9 @@ public class MainGui extends JFrame {
         pnlButtons.setLayout(new FlowLayout());
         pnlButtons.setOpaque(false);
 
-        Font fontBtn = new Font("Agency FB", Font.PLAIN, 22);
+        levelButtons = new JPanel();
+        levelButtons.setLayout(new FlowLayout());
+        levelButtons.setOpaque(false);
 
         btnPlaySingleplayer = new JButton("Singleplayer");
         btnPlaySingleplayer.setFont(fontBtn);
@@ -116,6 +190,18 @@ public class MainGui extends JFrame {
         btnPause = new JButton("Pause");
         btnPause.setFont(fontBtn);
 
+        Play = new JButton("Play");
+        Play.setFont(fontBtn);
+
+        normal = new JButton("Normal");
+        normal.setFont(fontBtn);
+
+        campaign = new JButton("Campaign");
+        campaign.setFont(fontBtn);
+
+        campaignPlay = new JButton("Play");
+        campaignPlay.setFont(fontBtn);
+
         pnlGame.add(btnPause);
 
         pnlButtons.add(btnPlaySingleplayer);
@@ -123,11 +209,24 @@ public class MainGui extends JFrame {
         pnlButtons.add(new Box.Filler(dim, dim, dim));
         pnlButtons.add(btnPlayMultiplayer);
 
+        modeButton.add(normal);
+        modeButton.add(new Box.Filler(dim, dim, dim));
+        modeButton.add(campaign);
+
         lblBackground.add(pnlButtons);
+
+        lblBackground3.add(modeButton);
 
         pnlPreGame.add(lblBackground);
 
+        generateLevelButtons(levelSelection, file, Play);
+
+        CampaignSelection = generateCampaignPanel();
+
+        GameMode.add(lblBackground3);
+
         getContentPane().add(pnlPreGame);
+        gameRunning = false;
     }
 
     private void initializeListeners() {
@@ -143,6 +242,7 @@ public class MainGui extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println(isGameRunning());
                 if (controller.isGameActive()) {
                     controller.pauseGame();
                 } else {
@@ -151,15 +251,95 @@ public class MainGui extends JFrame {
                     } else if(e.getSource() == btnPlayMultiplayer){
                         Settings.getInstance().setGameMode(Game.Mode.MULTIPLAYER);
                     }
-                    controller.startGame();
+                    //getContentPane().removeAll();
+                    //getContentPane().add(levelSelection);
+                    //setContentPane(levelSelection);
+                    if(gameRunning == false) {
+                        btnPlaySingleplayer.setText("Pause");
+                        getContentPane().removeAll();
+                        getContentPane().add(GameMode);
+                    }
+                    else
+                        controller.startGame(levelSelected);
+                    //controller.startGame();
+                    //btnPlaySingleplayer.setText("Pause");
+                    //getContentPane().removeAll();
+                    //getContentPane().add(GameMode);
                 }
                 repaint();
             }
 
         };
 
-        btnPause.addActionListener(toggleGameStateListener);
+        testListener = new ActionListener() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    if (e.getSource() == Play) {
+                        controller.startGame(levelSelected);
+                        gameRunning = true;
+                    }
+                    else if(e.getSource() == campaignPlay){
+                        campaignPlay.setText("pause");
+                        controller.startGame(levelSelected);
+                        gameRunning = true;
+                    }
+                repaint();
+            }
+
+        };
+
+        test2Listener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    if (e.getSource() == normal) {
+                        Settings.getInstance().setGameType(Game.Mode.NORMAL);
+                        Settings.getInstance().setLevelPath("src/main/resources/maps/levels");
+                        normalPlay();
+                    }
+                    else if (e.getSource() == campaign){
+                        Settings.getInstance().setGameType(Game.Mode.CAMPAIGN);
+                        Settings.getInstance().setLevelPath("src/main/resources/maps/campaign/campaign" + campaignIndex);
+                        campaign.setText("Pause");
+                        getContentPane().removeAll();
+                        getContentPane().add(generateCampaignPanel());
+                    }
+                repaint();
+            }
+
+        };
+
+        nextLister = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    if (e.getSource() == nextCampaign) {
+                        if(campaignIndex < nbrcampaignF.length) {
+                            campaignIndex++;
+                            Settings.getInstance().setLevelPath("src/main/resources/maps/campaign/campaign" + campaignIndex);
+                            switchCampaign(nextCampaign);
+                        }
+                    }
+                    else if (e.getSource() == previousCampaign){
+                        if(campaignIndex > 1) {
+                            campaignIndex--;
+                            Settings.getInstance().setLevelPath("src/main/resources/maps/campaign/campaign" + campaignIndex);
+                            switchCampaign(previousCampaign);
+                        }
+                    }
+                repaint();
+            }
+
+        };
+        
+        btnPause.addActionListener(toggleGameStateListener);
+        Play.addActionListener(testListener);
+        campaignPlay.addActionListener(testListener);
+        normal.addActionListener(test2Listener);
+        campaign.addActionListener(test2Listener);
+        nextCampaign.addActionListener(nextLister);
+        previousCampaign.addActionListener(nextLister);
         btnPlaySingleplayer.addActionListener(toggleGameStateListener);
         btnPlayMultiplayer.addActionListener(toggleGameStateListener);
 
@@ -173,8 +353,214 @@ public class MainGui extends JFrame {
         setTitle("Pacman: Game paused");
     }
 
+    public void generateLevelButtons(JPanel jpanel, File file, JButton Playbutton){
+        JPanel buttonList = new JPanel();
+        lblBackground2 = new JLabel(new ImageIcon(this.getClass().getResource("/graphics/background/main_background_middle.jpg")));
+        lblBackground2.setLayout(new FlowLayout());
+        int lengthList = file.list().length - 1;
+        if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN)
+            lengthList = file.list().length -2;
+        for(int i = 0; i <lengthList; i++){
+            LevelButton button = new LevelButton("level" + (i+1), (i+1));
+            button.setFont(new Font("Agency FB", Font.PLAIN, 22));
+            if((i+1) > getLastUnlocked() && i > 0) {
+                button.setText("Locked");
+                button.setLocked(true);
+            }
+            //button.setLocation(i*jpanel.getWidth(), i*jpanel.getHeight());
+            button.setStars(getLevelStar(i+1));
+            buttonList.add(button);
+        }
+        //buttonList.add(level1);
+        lblBackground2.add(buttonList);
+        jpanel.add(lblBackground2);
+        jpanel.add(Playbutton, BorderLayout.SOUTH);
+    }
+    public JPanel generateCampaignPanel(){
+        JPanel panel = new JPanel(new BorderLayout());
+        generateLevelButtons(panel, campaignFile, campaignPlay);
+
+        nextCampaign = new JButton("->");
+        nextCampaign.setFont(fontBtn);
+        nextCampaign.addActionListener(nextLister);
+
+        previousCampaign = new JButton("<-");
+        previousCampaign.setFont(fontBtn);
+        previousCampaign.addActionListener(nextLister);
+
+        panel.add(nextCampaign, BorderLayout.EAST);
+        panel.add(previousCampaign, BorderLayout.WEST);
+
+        if(getCampaignTotalStars() >= 6)
+            nextCampaign.setVisible(true);
+        else
+            nextCampaign.setVisible(false);
+
+        return panel;
+    }
+    public int getLastUnlocked(){
+        InputStream flux= null;
+        String filePath = null;
+        int maxLevel = 0;
+        try {
+            filePath = "src/main/resources/maps/levels/saveInfo.txt";
+            if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN)
+                filePath = "src/main/resources/maps/campaign/campaign"+campaignIndex+"/saveInfo.txt";
+            flux = new FileInputStream(filePath);
+            InputStreamReader lecture=new InputStreamReader(flux);
+            BufferedReader buff=new BufferedReader(lecture);
+            String ligne =buff.readLine();
+            maxLevel = Integer.parseInt(ligne);
+        } catch (FileNotFoundException e) {
+            initSave(1, filePath);
+        }
+        catch (IOException ie){
+            System.out.println("saveIOException "+ie);
+        }
+        return maxLevel;
+    }
+    public void initSave(int level, String path){
+        try {
+            String pathing = "src/main/resources/maps/levels";
+            File[] p = new File(pathing).listFiles();
+            Arrays.sort(p);
+            int nbrlevel = p.length;
+            if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN){
+                pathing = "src/main/resources/maps/campaign/campaign"+campaignIndex;
+                p = (new File(pathing)).listFiles();
+                Arrays.sort(p);
+                nbrlevel = p.length -1;
+            }
+            FileWriter fw = new FileWriter(path);
+            fw.write(level + "\r\n");
+            for(int i = 0; i < nbrlevel; i++){
+                fw.write(p[i].getPath() + " " + 0);
+                fw.write("\r\n");
+            }
+            fw.close();
+        }catch (IOException e){
+            System.out.println("saveIOException "+ e);
+        }
+    }
+
+    public static void saveCopy(String source, String destination, String levelPath, int levelStar, int unlockLevel){
+        try{
+            InputStream flux=new FileInputStream(source);
+            InputStreamReader lecture=new InputStreamReader(flux);
+            BufferedReader buff=new BufferedReader(lecture);
+            FileWriter fw = new FileWriter(destination);
+            String ligne;
+            while ((ligne=buff.readLine())!=null){
+                String[] mots = ligne.split(" ");
+                if(mots.length == 1){
+                    if(Integer.parseInt(mots[0]) < unlockLevel && unlockLevel < 999)
+                        fw.write("" + unlockLevel + "\r\n");
+                    else
+                        fw.write(mots[0] + "\r\n");
+                }
+                else {
+                    fw.write(mots[0] + " ");
+                    System.out.println((mots[0]) + "  " + levelPath+"klm");
+                    if((mots[0]).equals(levelPath)){
+                        if(Integer.parseInt(mots[1]) < levelStar)
+                            fw.write(levelStar + "\r\n");
+                        else
+                            fw.write(mots[1] + "\r\n");
+                    }
+                    else{
+                        fw.write(mots[1] + "\r\n");
+                    }
+                }
+            }
+            fw.close();
+            buff.close();
+        }
+        catch (Exception e){
+            System.out.println("save ERROR on save "+e);
+        }
+    }
+
+    public static void save(String levelPath, int levelStar, int unlockLevel){
+        String destination = "save1.save";
+        saveCopy(Settings.getInstance().getLevelPath()+ "/saveInfo.txt", destination, levelPath, levelStar, unlockLevel);
+        saveCopy(destination, Settings.getInstance().getLevelPath()+ "/saveInfo.txt", levelPath, levelStar, unlockLevel);
+        File delete = new File(destination);
+        delete.delete();
+    }
+
+    public int getLevelStar(int level) {
+        int nbrStar = 0;
+        try {
+            String filePath = "src/main/resources/maps/levels/saveInfo.txt";
+            if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN)
+                filePath = "src/main/resources/maps/campaign/campaign"+campaignIndex+"/saveInfo.txt";
+            InputStream flux = new FileInputStream(filePath);
+            InputStreamReader lecture = new InputStreamReader(flux);
+            BufferedReader buff = new BufferedReader(lecture);
+            String ligne;
+            int index = 0;
+            while ((ligne = buff.readLine()) != null) {
+                String[] mots = ligne.split(" ");
+                if(index == level){
+                    nbrStar = Integer.parseInt(mots[1]);
+                }
+                index++;
+            }
+        } catch (Exception e) {
+            System.out.println("error");
+        }
+        return nbrStar;
+    }
+    public int getCampaignTotalStars(){
+        int total = 0;
+        String pathing = "src/main/resources/maps/campaign/campaign"+campaignIndex;
+        File[] p = (new File(pathing)).listFiles();
+        Arrays.sort(p);
+        int nbrlevel = p.length -2;
+        for(int i = 0; i < nbrlevel; i++){
+            total = total + getLevelStar(i+1);
+        }
+        return total;
+
+    }
+    public File getCampaignPath(){
+        return new File("src/main/resources/maps/campaign/campaign" + campaignIndex);
+    }
+
+    public static void setLevelSelected(int newLevel) {
+        levelSelected = newLevel;
+    }
+
+    public static boolean isGameRunning() {
+        return gameRunning;
+    }
+
+    public static void setGameRunning(boolean running){
+        gameRunning = running;
+    }
+
+    public static File[] getF() {
+        return f;
+    }
+
+    public void normalPlay(){
+        normal.setText("Pause");
+        normal.setText("Normal");
+        getContentPane().removeAll();
+        getContentPane().add(levelSelection);
+        //Map.getInstance().markAllForRendering();
+        //renderer.markReady();
+    }
+
+    public void switchCampaign(JButton button){
+        button.setText("pause");
+        getContentPane().removeAll();
+        campaignFile = getCampaignPath();
+        getContentPane().add(generateCampaignPanel());
+    }
+
     public void showGame() {
-        btnPlaySingleplayer.setText("Pause");
+        Play.setText("Pause");
         btnPause.setText("Pause");
         getContentPane().removeAll();
         getContentPane().add(pnlGame);
@@ -193,8 +579,8 @@ public class MainGui extends JFrame {
         return renderer;
     }
 
-    public void onGameOver() {
-        btnPause.setText("GAME OVER");
+    public void onFinishScreen(String text){
+        btnPause.setText(text);
         btnPause.removeActionListener(toggleGameStateListener);
         btnPause.addActionListener(new ActionListener() {
 
@@ -210,6 +596,14 @@ public class MainGui extends JFrame {
                 repaint();
             }
         });
+    }
+
+    public void endCampaign(){
+        onFinishScreen("BACK");
+    }
+
+    public void onGameOver() {
+        onFinishScreen("GAME OVER");
     }
 
     private class GamePanel extends JPanel {
@@ -270,6 +664,54 @@ public class MainGui extends JFrame {
             }
 
             requestFocusInWindow();
+        }
+    }
+    private class LevelButton extends JButton implements ActionListener{
+        private int level;
+
+        private boolean locked;
+
+        private int stars;
+
+        private JPanel panel;
+        public LevelButton(String text, int level){
+            super(text);
+            this.level = level;
+            this.locked = false;
+            this.panel = panel;
+            addActionListener(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            if(locked == false) {
+                System.out.println(stars);
+                setText(showStars());
+                setLevelSelected(this.level);
+            }
+        }
+
+        public String showStars(){
+            if(stars == 0)
+                return "       ";
+            else if(stars == 1)
+                return "   *   ";
+            else if(stars == 2)
+                return "  **   ";
+            else
+                return "  ***  ";
+        }
+
+        public boolean isLocked() {
+            return locked;
+        }
+
+        public void setLocked(boolean locked) {
+            this.locked = locked;
+        }
+
+        public void setStars(int stars) {
+            this.stars = stars;
         }
     }
 }

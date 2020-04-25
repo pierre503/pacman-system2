@@ -11,8 +11,10 @@ package model.event;
 import controller.MainController;
 import model.*;
 import model.Map.Direction;
+import view.MainGui;
 
 import javax.swing.*;
+import java.lang.reflect.GenericArrayType;
 import java.util.ArrayList;
 
 /**
@@ -123,7 +125,29 @@ public class WorkerProcess implements Process {
         performFurtherActions = (pointsEaten != size) && (!Game.getInstance().isGameOver());
 
         if (pointsEaten == size) {
-            Level.getInstance().nextLevel();
+            MainGui.save(Settings.getInstance().getLevelPath() + "/Pacman" + Level.getInstance().getLevel() + ".tmx", Level.getInstance().star, (Level.getInstance().getLevel()+1));
+            System.out.println(MainGui.getF().length);
+            if((Map.getInstance().level)+1 <= MainGui.getF().length) {
+                //Game.getInstance().gameOver();
+                Game.getInstance().nextMap((Map.getInstance().level)+1);
+                Level.getInstance().nextLevel();
+            }
+            else{
+                System.out.println(Level.getInstance().star);
+                System.out.println(Game.getInstance().getGui().getCampaignTotalStars());
+                if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN && Game.getInstance().getGui().getCampaignTotalStars() == 9 && Level.getInstance().getLevel() != 999) {
+                    Game.getInstance().nextMap(999);
+                    Level.getInstance().nextLevel();
+                }
+                else {
+                    Game.getInstance().isOver = true;
+                    Game.getInstance().getEventHandlerManager().pauseExecution();
+                    MainController.getInstance().getGui().endCampaign();
+                    MainController.getInstance().getGui().getRenderer().markReady();
+                }
+            }
+            //if(Level.getInstance().getLevel() > MainGui.getLastLevelUnlocked())
+                //MainGui.initSave(Level.getInstance().getLevel());
         }
 
         return performFurtherActions;

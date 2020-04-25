@@ -8,6 +8,8 @@
 
 package model;
 
+import view.MainGui;
+
 /**
  * @author Philipp Winter
  * @author Jonas Heidecke
@@ -18,6 +20,8 @@ public class Level {
     private static Level instance;
 
     private int level = 1;
+
+    public int star = 3;
 
     private double secondsPerCoin = 7;
 
@@ -33,7 +37,8 @@ public class Level {
         // Reduce the amount of time the user has to munch a ghost
         this.secondsPerCoin *= 0.85;
 
-        this.level++;
+        //if(level < MainGui.getF().length)
+          //  this.level++;
 
         // Change the refresh rate = How fast is the pacman moving
         Game.getInstance().changeRefreshRate(this);
@@ -52,6 +57,10 @@ public class Level {
 
     public int getLevel() {
         return this.level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     private Level() {

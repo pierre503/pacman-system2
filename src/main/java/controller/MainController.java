@@ -89,15 +89,16 @@ public class MainController extends Thread {
         Game.reset();
         game = Game.getInstance();
         gui = new MainGui();
+        this.game.setGui(gui);
     }
 
     /**
      * Start the game.
      */
-    public void startGame() {
+    public void startGame(int level) {
         this.gameActive = true;
         this.gui.showGame();
-        this.game.start();
+        this.game.start(level);
     }
 
     public void pauseGame() {
