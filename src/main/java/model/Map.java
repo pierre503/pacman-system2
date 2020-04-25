@@ -67,18 +67,20 @@ public class Map {
 
     private Map(String File) {
         MapInformation mapInf = MapParser.ParseMap(File);
+        mapInf.isMapValid();
         load(mapInf);
     }
 
     public void getNextMap(int next){
         MapInformation mapInf;
         if(level == 999) {
-            System.out.println("test");
             mapInf = MapParser.ParseMap(Settings.getInstance().getLevelPath() + "/PacmanBonus");
+            mapInf.isMapValid();
         }
         else {
             level = next;
             mapInf = MapParser.ParseMap(Settings.getInstance().getLevelPath() + "/Pacman" + level);
+            mapInf.isMapValid();
         }
         load(mapInf);
     }
@@ -98,6 +100,7 @@ public class Map {
                 this.positionContainer.add(new Position(actX, actY));
             }
         }
+        respawnPosition = null;
     }
 
     public PositionContainer getPositionContainer() {
@@ -309,7 +312,10 @@ public class Map {
         for(Pacman p : pC) {
             switch(p.getSex()) {
                 case MALE:
-                    p.move(startingPositions.PACMAN_MALE);
+                    if(respawnPosition != null)
+                        p.move(respawnPosition);
+                    else
+                        p.move(startingPositions.PACMAN_MALE);
                     break;
                 case FEMALE:
                     p.move(startingPositions.PACMAN_FEMALE);

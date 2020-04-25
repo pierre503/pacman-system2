@@ -81,7 +81,6 @@ public class Settings {
                     }
                 index++;
             }
-            System.out.println(extension);
             return extension;
         }catch (Exception e){}
         return null;

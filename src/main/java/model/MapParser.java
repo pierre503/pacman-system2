@@ -13,10 +13,8 @@ public class MapParser {
     public static MapInformation ParseMap(String file){
         if(Settings.getInstance().getExtension(file).equals(".tmx"))
             return ParseTmxMap(file + ".tmx");
-        else if(Settings.getInstance().getExtension(file).equals(".txt")) {
-            System.out.println("test");
+        else if(Settings.getInstance().getExtension(file).equals(".txt"))
             return ParseTxtMap(file + ".txt");
-        }
         else
             return null;
     }
@@ -39,7 +37,6 @@ public class MapParser {
             for(int n =0; n < tileset.getLength() ; n++){
                 int id = Integer.parseInt(tileset.item(n).getAttributes().getNamedItem("id").getTextContent());
                 String type = tileset.item(n).getAttributes().getNamedItem("type").getTextContent();
-                System.out.println(id + " / " + type);
                 tile.put(type,id);
             }
             Scanner scan = new Scanner(layer.getTextContent());
@@ -91,11 +88,9 @@ public class MapParser {
             while ((ligne = buff.readLine()) != null) {
                 String[] mots = ligne.split(",");
                 if(index == 0){
-                    System.out.println(mots[0] + " " + mots[1]);
                     board = new int[Integer.parseInt(mots[0])][Integer.parseInt(mots[1])];
                 }
                 else{
-                    System.out.println(mots.length);
                     for(int j = 0; j < mots.length; j++){
                         board[j][i] = Integer.parseInt(mots[j]);
                     }

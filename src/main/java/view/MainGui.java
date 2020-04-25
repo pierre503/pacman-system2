@@ -244,7 +244,6 @@ public class MainGui extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(isGameRunning());
                 if (controller.isGameActive()) {
                     controller.pauseGame();
                 } else {
@@ -253,13 +252,6 @@ public class MainGui extends JFrame {
                     } else if(e.getSource() == btnPlayMultiplayer){
                         Settings.getInstance().setGameMode(Game.Mode.MULTIPLAYER);
                     }
-                    //getContentPane().removeAll();
-                    //getContentPane().add(levelSelection);
-                    //setContentPane(levelSelection);
-                    MapInformation m = MapParser.ParseTxtMap("src/main/resources/maps/levels/Pacman3.txt");
-                    MapInformation m2 = MapParser.ParseTmxMap("src/main/resources/maps/levels/Pacman2.tmx");
-                    System.out.println(m.getBoard()[0].length);
-                    System.out.println(m2.getBoard()[0].length);
                     if(gameRunning == false) {
                         btnPlaySingleplayer.setText("Pause");
                         getContentPane().removeAll();
@@ -267,10 +259,6 @@ public class MainGui extends JFrame {
                     }
                     else
                         controller.startGame(levelSelected);
-                    //controller.startGame();
-                    //btnPlaySingleplayer.setText("Pause");
-                    //getContentPane().removeAll();
-                    //getContentPane().add(GameMode);
                 }
                 repaint();
             }
@@ -303,6 +291,7 @@ public class MainGui extends JFrame {
                         Settings.getInstance().setGameType(Game.Mode.NORMAL);
                         Settings.getInstance().setLevelPath("src/main/resources/maps/levels");
                         normalPlay();
+                        setTitle("Pacman Levels");
                     }
                     else if (e.getSource() == campaign){
                         Settings.getInstance().setGameType(Game.Mode.CAMPAIGN);
@@ -310,6 +299,7 @@ public class MainGui extends JFrame {
                         campaign.setText("Pause");
                         getContentPane().removeAll();
                         getContentPane().add(generateCampaignPanel());
+                        setTitle("Campaign " + campaignIndex);
                     }
                 repaint();
             }
@@ -325,6 +315,7 @@ public class MainGui extends JFrame {
                             campaignIndex++;
                             Settings.getInstance().setLevelPath("src/main/resources/maps/campaign/campaign" + campaignIndex);
                             switchCampaign(nextCampaign);
+                            setTitle("Campaign " + campaignIndex);
                         }
                     }
                     else if (e.getSource() == previousCampaign){
@@ -332,6 +323,7 @@ public class MainGui extends JFrame {
                             campaignIndex--;
                             Settings.getInstance().setLevelPath("src/main/resources/maps/campaign/campaign" + campaignIndex);
                             switchCampaign(previousCampaign);
+                            setTitle("Campaign " + campaignIndex);
                         }
                     }
                 repaint();
@@ -373,11 +365,9 @@ public class MainGui extends JFrame {
                 button.setText("Locked");
                 button.setLocked(true);
             }
-            //button.setLocation(i*jpanel.getWidth(), i*jpanel.getHeight());
             button.setStars(loadSave.getLevelStar(i+1));
             buttonList.add(button);
         }
-        //buttonList.add(level1);
         lblBackground2.add(buttonList);
         jpanel.add(lblBackground2);
         jpanel.add(Playbutton, BorderLayout.SOUTH);
@@ -404,134 +394,6 @@ public class MainGui extends JFrame {
 
         return panel;
     }
-    /*public int getLastUnlocked(){
-        InputStream flux= null;
-        String filePath = null;
-        int maxLevel = 0;
-        try {
-            filePath = "src/main/resources/maps/levels/saveInfo.txt";
-            if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN)
-                filePath = "src/main/resources/maps/campaign/campaign"+campaignIndex+"/saveInfo.txt";
-            flux = new FileInputStream(filePath);
-            InputStreamReader lecture=new InputStreamReader(flux);
-            BufferedReader buff=new BufferedReader(lecture);
-            String ligne =buff.readLine();
-            maxLevel = Integer.parseInt(ligne);
-        } catch (FileNotFoundException e) {
-            initSave(1, filePath);
-        }
-        catch (IOException ie){
-            System.out.println("saveIOException "+ie);
-        }
-        return maxLevel;
-    }
-    public void initSave(int level, String path){
-        try {
-            String pathing = "src/main/resources/maps/levels";
-            File[] p = new File(pathing).listFiles();
-            Arrays.sort(p);
-            int nbrlevel = p.length;
-            if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN){
-                pathing = "src/main/resources/maps/campaign/campaign"+campaignIndex;
-                p = (new File(pathing)).listFiles();
-                Arrays.sort(p);
-                nbrlevel = p.length -1;
-            }
-            FileWriter fw = new FileWriter(path);
-            fw.write(level + "\r\n");
-            for(int i = 0; i < nbrlevel; i++){
-                fw.write(p[i].getPath() + " " + 0);
-                fw.write("\r\n");
-            }
-            fw.close();
-        }catch (IOException e){
-            System.out.println("saveIOException "+ e);
-        }
-    }
-
-    public static void saveCopy(String source, String destination, String levelPath, int levelStar, int unlockLevel){
-        try{
-            InputStream flux=new FileInputStream(source);
-            InputStreamReader lecture=new InputStreamReader(flux);
-            BufferedReader buff=new BufferedReader(lecture);
-            FileWriter fw = new FileWriter(destination);
-            String ligne;
-            while ((ligne=buff.readLine())!=null){
-                String[] mots = ligne.split(" ");
-                if(mots.length == 1){
-                    if(Integer.parseInt(mots[0]) < unlockLevel && unlockLevel < 999)
-                        fw.write("" + unlockLevel + "\r\n");
-                    else
-                        fw.write(mots[0] + "\r\n");
-                }
-                else {
-                    fw.write(mots[0] + " ");
-                    System.out.println((mots[0]) + "  " + levelPath+"klm");
-                    if((mots[0]).equals(levelPath)){
-                        if(Integer.parseInt(mots[1]) < levelStar)
-                            fw.write(levelStar + "\r\n");
-                        else
-                            fw.write(mots[1] + "\r\n");
-                    }
-                    else{
-                        fw.write(mots[1] + "\r\n");
-                    }
-                }
-            }
-            fw.close();
-            buff.close();
-        }
-        catch (Exception e){
-            System.out.println("save ERROR on save "+e);
-        }
-    }
-
-    public static void save(String levelPath, int levelStar, int unlockLevel){
-        String destination = "save1.save";
-        saveCopy(Settings.getInstance().getLevelPath()+ "/saveInfo.txt", destination, levelPath, levelStar, unlockLevel);
-        saveCopy(destination, Settings.getInstance().getLevelPath()+ "/saveInfo.txt", levelPath, levelStar, unlockLevel);
-        File delete = new File(destination);
-        delete.delete();
-    }
-
-    public int getLevelStar(int level) {
-        int nbrStar = 0;
-        try {
-            String filePath = "src/main/resources/maps/levels/saveInfo.txt";
-            if(Settings.getInstance().getGameType() == Game.Mode.CAMPAIGN)
-                filePath = "src/main/resources/maps/campaign/campaign"+campaignIndex+"/saveInfo.txt";
-            InputStream flux = new FileInputStream(filePath);
-            InputStreamReader lecture = new InputStreamReader(flux);
-            BufferedReader buff = new BufferedReader(lecture);
-            String ligne;
-            int index = 0;
-            while ((ligne = buff.readLine()) != null) {
-                String[] mots = ligne.split(" ");
-                if(index == level){
-                    nbrStar = Integer.parseInt(mots[1]);
-                }
-                index++;
-            }
-        } catch (Exception e) {
-            System.out.println("error");
-        }
-        return nbrStar;
-    }
-    public int getCampaignTotalStars(){
-        int total = 0;
-        String pathing = "src/main/resources/maps/campaign/campaign"+campaignIndex;
-        File[] p = (new File(pathing)).listFiles();
-        Arrays.sort(p);
-        int nbrlevel = p.length -2;
-        for(int i = 0; i < nbrlevel; i++){
-            total = total + getLevelStar(i+1);
-        }
-        return total;
-
-    }
-    public File getCampaignPath(){
-        return new File("src/main/resources/maps/campaign/campaign" + campaignIndex);
-    }*/
 
     public static void setLevelSelected(int newLevel) {
         levelSelected = newLevel;

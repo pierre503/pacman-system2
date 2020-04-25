@@ -1,4 +1,4 @@
-3
+4
 src/main/resources/maps/levels/Pacman1.tmx 3
 src/main/resources/maps/levels/Pacman2.tmx 3
-src/main/resources/maps/levels/Pacman3.txt 0
+src/main/resources/maps/levels/Pacman3.txt 3
