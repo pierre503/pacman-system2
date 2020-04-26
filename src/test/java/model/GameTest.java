@@ -87,7 +87,7 @@ public class GameTest {
 
     @Test
     public void testStart() {
-        Game.getInstance().start();
+        Game.getInstance().start(1);
     }
 
     @Test

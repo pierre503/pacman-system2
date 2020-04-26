@@ -1,0 +1,4 @@
+4
+src/main/resources/maps/campaign/campaign2/Pacman1.tmx 3
+src/main/resources/maps/campaign/campaign2/Pacman2.tmx 3
+src/main/resources/maps/campaign/campaign2/Pacman3.tmx 3

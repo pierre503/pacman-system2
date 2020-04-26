@@ -124,6 +124,12 @@ public class WorkerProcess implements Process {
 
         performFurtherActions = (pointsEaten != size) && (!Game.getInstance().isGameOver());
 
+        levelFinish(pointsEaten, size);
+
+        return performFurtherActions;
+    }
+
+    private void levelFinish(int pointsEaten, int size) {
         if (pointsEaten == size) {
             Game.getInstance().getGui().getLoadSave().save(Settings.getInstance().getLevelPath() + "/Pacman" + Level.getInstance().getLevel() + Settings.getInstance().getExtension(Settings.getInstance().getLevelPath() + "/Pacman" + Level.getInstance().getLevel()), Level.getInstance().star, (Level.getInstance().getLevel()+1));
             if((Map.getInstance().level)+1 <= MainGui.getF().length) {
@@ -144,8 +150,6 @@ public class WorkerProcess implements Process {
                 }
             }
         }
-
-        return performFurtherActions;
     }
 
     private void handlePacmans() {

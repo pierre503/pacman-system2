@@ -44,7 +44,7 @@ public class MainControllerTest {
 
     @Test
     public void testStartAndPause() {
-        MainController.getInstance().startGame();
+        MainController.getInstance().startGame(1);
         MainController.getInstance().pauseGame();
     }
 }

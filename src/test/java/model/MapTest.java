@@ -41,7 +41,7 @@ public class MapTest {
     @Test
     public void testReset() {
         Map oldO = Map.getInstance();
-        Map.reset();
+        Map.reset(1);
         Map newO = Map.getInstance();
         assertNotSame(oldO, newO);
     }

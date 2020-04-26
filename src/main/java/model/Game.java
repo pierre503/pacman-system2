@@ -14,8 +14,6 @@ import model.event.Timer;
 import model.event.WorkerProcess;
 import view.MainGui;
 
-import javax.swing.*;
-
 /**
  * The Game class is kind of a <i>master</i>-class, organizing all other business logic objects.
  *
@@ -24,6 +22,7 @@ import javax.swing.*;
  * @author Niklas Kaddatz
  */
 public class Game {
+    private GameContainer gameProduct = new GameContainer();
 
     static {
         Game.reset();
@@ -47,21 +46,6 @@ public class Game {
      * A container of all ghosts.
      */
     private GhostContainer ghostContainer;
-
-    /**
-     * A container of all fruits.
-     */
-    private FruitContainer fruitsContainer;
-
-    /**
-     * A container of all coins.
-     */
-    private CoinContainer coinContainer;
-
-    /**
-     * A container of all points.
-     */
-    private PointContainer pointContainer;
 
     /**
      * A container of all pacmans.
@@ -123,7 +107,7 @@ public class Game {
 
         this.map = Map.getInstance(1);
 
-        resetContainer();
+        gameProduct.resetContainer(this);
 
         this.level = Level.getInstance();
 
@@ -134,36 +118,32 @@ public class Game {
         this.map.placeObjects();
     }
 
-    public void nextMap(int nextMap){
-            this.map.getNextMap(nextMap);
-            this.level.setLevel(nextMap);
-            this.level.star = 3;
-            resetContainer();
-            this.map.placeObjects();
+    public void nextMap(int nextMap) {
+        this.map.getNextMap(nextMap);
+        this.level.setLevel(nextMap);
+        this.level.star = 3;
+        gameProduct.resetContainer(this);
+        this.map.placeObjects();
     }
 
-    public void resetContainer(){
-        this.ghostContainer = new GhostContainer();
-        this.coinContainer = new CoinContainer();
-        this.pointContainer = new PointContainer();
-        this.pacmanContainer = new PacmanContainer();
-        this.fruitsContainer = new FruitContainer();
+    public void resetContainer() {
+        gameProduct.resetContainer(this);
     }
 
-    public void respawn(){
-        int i = (int) (Math.random()*map.getPositionContainer().getAll().size());
+    public void respawn() {
+        int i = (int) (Math.random() * map.getPositionContainer().getAll().size());
         MapObjectContainer p = map.getPositionContainer().getAll().get(i).getOnPosition();
-        if(p.size() == 1 && p.get(0) instanceof Point) {
+        if (p.size() == 1 && p.get(0) instanceof Point) {
             map.setRespawnPosition(map.getPositionContainer().getAll().get(i));
-        }
-        else
+        } else
             respawn();
     }
-    public boolean isAGhost(Position pos){
+
+    public boolean isAGhost(Position pos) {
         int i = 0;
         boolean b = false;
-        while(i < ghostContainer.max){
-            if(pos.equals(ghostContainer.get(i).position)){
+        while (i < ghostContainer.max) {
+            if (pos.equals(ghostContainer.get(i).position)) {
                 b = true;
                 i = 5;
             }
@@ -171,25 +151,27 @@ public class Game {
         }
         return b;
     }
-    public boolean ghostOnPosition(MapObjectContainer p, int x, int y){
+
+    public boolean ghostOnPosition(MapObjectContainer p, int x, int y) {
         try {
             Position pos = map.getPositionContainer().get(p.get(0).getPosition().getX() + x, p.get(0).getPosition().getY() + y);
             if (isAGhost(pos))
                 return false;
             else
                 return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("exception");
-            return true;}
+            return true;
+        }
     }
 
-    public boolean ghostInRangeOf(MapObjectContainer p, int range){
+    public boolean ghostInRangeOf(MapObjectContainer p, int range) {
         int i = 1;
         boolean b = true;
         while (i <= range) {
             if (ghostOnPosition(p, i, 0) == false || ghostOnPosition(p, -i, 0) == false || ghostOnPosition(p, 0, i) == false || ghostOnPosition(p, 0, -i) == false) {
                 b = false;
-                i = range +1;
+                i = range + 1;
             }
             i++;
         }
@@ -209,7 +191,7 @@ public class Game {
 
     public void reducePLayerLifes() {
         this.playerLifes -= 1;
-        if(this.level.star > 0)
+        if (this.level.star > 0)
             this.level.star -= 1;
     }
 
@@ -232,7 +214,7 @@ public class Game {
      * @return The container used to manage all instance of {@link Coin}'s in the object tree.
      */
     public CoinContainer getCoinContainer() {
-        return coinContainer;
+        return gameProduct.getCoinContainer();
     }
 
     /**
@@ -241,7 +223,7 @@ public class Game {
      * @return The container used to manage all instance of {@link Point}'s in the object tree.
      */
     public PointContainer getPointContainer() {
-        return pointContainer;
+        return gameProduct.getPointContainer();
     }
 
     /**
@@ -260,7 +242,7 @@ public class Game {
      * @return The container used to manage all instance of {@link Fruit}'s in the object tree.
      */
     public FruitContainer getFruitsContainer() {
-        return fruitsContainer;
+        return gameProduct.getFruitsContainer();
     }
 
     /**
@@ -293,23 +275,23 @@ public class Game {
     }
 
     /**
-     * Starts the game, in detail it causes all {@link model.event.WorkerProcess}'s to start working.
+     * Starts the game, in detail it causes all {@link WorkerProcess}'s to start working.
      *
-     * @see model.event.Timer#startExecution()
+     * @see Timer#startExecution()
      */
     public void start(int level) {
-        if(MainGui.isGameRunning() == false)
+        if (MainGui.isGameRunning() == false)
             nextMap(level);
-        if(pointContainer.size() == 0){
+        if (gameProduct.getPointContainer().size() == 0) {
             this.map.placeObjects();
         }
         this.eventHandlerManager.startExecution();
     }
 
     /**
-     * Pauses the game, by stopping/pausing all {@link model.event.WorkerProcess}'s.
+     * Pauses the game, by stopping/pausing all {@link WorkerProcess}'s.
      *
-     * @see model.event.Timer#pauseExecution()
+     * @see Timer#pauseExecution()
      */
     public void pause() {
         this.eventHandlerManager.pauseExecution();
@@ -319,7 +301,6 @@ public class Game {
      * Compares two objects for equality.
      *
      * @param o The other object.
-     *
      * @return Whether both objects are equal.
      */
     public boolean equals(Object o) {
@@ -331,7 +312,6 @@ public class Game {
         }
         return false;
     }
-
 
 
     public void gameOver() {
@@ -368,5 +348,13 @@ public class Game {
 
     public enum Mode {
         SINGLEPLAYER, MULTIPLAYER, NORMAL, CAMPAIGN
+    }
+
+    public void setGhostContainer(GhostContainer ghostContainer) {
+        this.ghostContainer = ghostContainer;
+    }
+
+    public void setPacmanContainer(PacmanContainer pacmanContainer) {
+        this.pacmanContainer = pacmanContainer;
     }
 }

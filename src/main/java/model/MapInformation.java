@@ -57,7 +57,7 @@ public class MapInformation {
 
     private boolean canEatCoin(Position player){
         boolean[][] virtualBoard = new boolean[board.length][board[0].length];
-        virtualBoard[player.x][player.y] = true;
+        virtualBoard[player.getX()][player.getY()] = true;
         travelBoard(virtualBoard, player);
         for(int i = 0; i < board.length; i++){
             for(int j = 0; j<board[0].length; j++){
@@ -81,10 +81,10 @@ public class MapInformation {
     }
 
     private void travelBoard(boolean[][] virtualBoard, Position position){
-        int right = position.x + 1;
-        int left = position.x - 1;
-        int up = position.y + 1;
-        int down = position.y -1;
+        int right = position.getX() + 1;
+        int left = position.getX() - 1;
+        int up = position.getY() + 1;
+        int down = position.getY() -1;
         if(right >= board.length)
             right = 0;
         if(left < 0)
@@ -93,10 +93,10 @@ public class MapInformation {
             up = 0;
         if(down < 0)
             down = board[0].length - 1;
-        caseChecking(virtualBoard, right, position.y);
-        caseChecking(virtualBoard, left, position.y);
-        caseChecking(virtualBoard, position.x, up);
-        caseChecking(virtualBoard, position.x, down);
+        caseChecking(virtualBoard, right, position.getY());
+        caseChecking(virtualBoard, left, position.getY());
+        caseChecking(virtualBoard, position.getX(), up);
+        caseChecking(virtualBoard, position.getX(), down);
     }
 
     public boolean isCaseGhost(int i, int j){
@@ -142,12 +142,4 @@ public class MapInformation {
         this.tile = tile;
     }
 
-    private static class Position{
-        public int x;
-        public int y;
-        public Position(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
-    }
 }
