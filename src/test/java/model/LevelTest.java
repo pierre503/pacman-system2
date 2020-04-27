@@ -45,7 +45,6 @@ public class LevelTest {
         System.out.println(Game.getInstance().getPointContainer().size());
         instance.nextLevel();
         assertTrue("Assert that " + Game.getInstance().getRefreshRate() + " is greater than " + Game.BASIC_REFRESH_RATE, Game.getInstance().getRefreshRate() > Game.BASIC_REFRESH_RATE);
-        assertEquals(2, instance.getLevel());
     }
 
     @Test
